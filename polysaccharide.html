@@ -1,302 +1,317 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polysaccharide Visualization</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
-        .container {
-            text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            margin-top: 0;
-            color: #333;
-        }
-        #viewer {
-            width: 600px;
-            height: 500px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin: 20px auto;
-            display: block;
-            position: relative;
-            overflow: hidden;
-        }
-        #viewer canvas {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-        }
-        .controls {
-            margin: 20px 0;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            font-size: 14px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .legend {
-            text-align: left;
-            display: inline-block;
-            margin: 15px 0;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 4px;
-            border-left: 4px solid #4CAF50;
-        }
-        .legend-item {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-        .info {
-            max-width: 600px;
-            text-align: left;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #555;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polysaccharide Visualization</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      text-align: center;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #333;
+    }
+
+    #viewer {
+      width: 600px;
+      height: 500px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin: 20px auto;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #viewer canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    .controls {
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 14px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .legend {
+      text-align: left;
+      display: inline-block;
+      margin: 15px 0;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 4px;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .legend-item {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+
+    .info {
+      max-width: 600px;
+      text-align: left;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #555;
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Polysaccharide Molecular Visualization</h1>
-        <p>Complex Carbohydrates Structure (Glucose Polymer)</p>
-        
-        <div id="viewer"></div>
-        
-        <div class="controls">
-            <button onclick="visualizeGlucose()">Single Glucose</button>
-            <button onclick="visualizeStarch()">Starch Chain</button>
-            <button onclick="visualizeCellulose()">Cellulose Chain</button>
-            <button onclick="visualizeGlycogen()">Glycogen (Branched)</button>
-            <button onclick="resetView()">Reset View</button>
-        </div>
-        
-        <div class="legend">
-            <div style="font-weight: bold; margin-bottom: 10px;">Atom Legend</div>
-            <div class="legend-item">⚪ <span style="color: #888;">Carbon (C)</span> - 1.70 Å</div>
-            <div class="legend-item">⚪ <span style="color: #f0f0f0; text-shadow: 0 0 2px #000;">Hydrogen (H)</span> - 1.20 Å</div>
-            <div class="legend-item">⚪ <span style="color: #ff6b6b;">Oxygen (O)</span> - 1.52 Å</div>
-            <div style="margin-top: 10px; font-style: italic; font-size: 12px;">
-                Bonds shown as grey lines | Scale: 1 Ångström ≈ 0.1 nm
-            </div>
-        </div>
-        
-        <div class="info">
-            <h3>About Polysaccharides</h3>
-            <p><strong>Polysaccharides</strong> are complex carbohydrates made of multiple monosaccharide units (glucose) linked together by glycosidic bonds.</p>
-            <ul>
-                <li><strong>Starch:</strong> Plant energy storage (α-1,4 and α-1,6 glucose bonds)</li>
-                <li><strong>Cellulose:</strong> Plant structural component (β-1,4 glucose bonds)</li>
-                <li><strong>Glycogen:</strong> Animal energy storage (similar to starch but highly branched)</li>
-                <li><strong>Chitin:</strong> Insect exoskeletons (N-acetyl glucose polymer)</li>
-            </ul>
-            <p><strong>Molecular Formula:</strong> Glucose (C₆H₁₂O₆) × n units</p>
-        </div>
+  <div class="container">
+    <h1>Polysaccharide Molecular Visualization</h1>
+    <p>Complex Carbohydrates Structure (Glucose Polymer)</p>
+
+    <div id="viewer"></div>
+
+    <div class="controls">
+      <button onclick="visualizeGlucose()">Single Glucose</button>
+      <button onclick="visualizeStarch()">Starch Chain</button>
+      <button onclick="visualizeCellulose()">Cellulose Chain</button>
+      <button onclick="visualizeGlycogen()">Glycogen (Branched)</button>
+      <button onclick="resetView()">Reset View</button>
     </div>
 
-    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
-    <script>
-        let viewer;
-        let currentStructure = 'glucose';
+    <div class="legend">
+      <div style="font-weight: bold; margin-bottom: 10px;">Atom Legend</div>
+      <div class="legend-item">⚪ <span style="color: #888;">Carbon (C)</span> - 1.70 Å</div>
+      <div class="legend-item">⚪ <span style="color: #f0f0f0; text-shadow: 0 0 2px #000;">Hydrogen (H)</span> - 1.20 Å
+      </div>
+      <div class="legend-item">⚪ <span style="color: #ff6b6b;">Oxygen (O)</span> - 1.52 Å</div>
+      <div style="margin-top: 10px; font-style: italic; font-size: 12px;">
+        Bonds shown as grey lines | Scale: 1 Ångström ≈ 0.1 nm
+      </div>
+    </div>
 
-        // Element data: color, radius (in picometers, scaled for visualization)
-        const elements = {
-            'C': { color: 0x909090, radius: 0.77, name: 'Carbon' },
-            'H': { color: 0xffffff, radius: 0.53, name: 'Hydrogen' },
-            'O': { color: 0xff6b6b, radius: 0.66, name: 'Oxygen' }
-        };
+    <div class="info">
+      <h3>About Polysaccharides</h3>
+      <p><strong>Polysaccharides</strong> are complex carbohydrates made of multiple monosaccharide units (glucose)
+        linked together by glycosidic bonds.</p>
+      <ul>
+        <li><strong>Starch:</strong> Plant energy storage (α-1,4 and α-1,6 glucose bonds)</li>
+        <li><strong>Cellulose:</strong> Plant structural component (β-1,4 glucose bonds)</li>
+        <li><strong>Glycogen:</strong> Animal energy storage (similar to starch but highly branched)</li>
+        <li><strong>Chitin:</strong> Insect exoskeletons (N-acetyl glucose polymer)</li>
+      </ul>
+      <p><strong>Molecular Formula:</strong> Glucose (C₆H₁₂O₆) × n units</p>
+    </div>
+  </div>
 
-        function initViewer() {
-            const viewerElement = document.getElementById('viewer');
-            viewer = $3Dmol.createViewer(viewerElement, {});
-            viewer.setBackgroundColor("white");
+  <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+  <script>
+    let viewer;
+    let currentStructure = 'glucose';
+
+    // Element data: color, radius (in picometers, scaled for visualization)
+    const elements = {
+      'C': { color: 0x909090, radius: 0.77, name: 'Carbon' },
+      'H': { color: 0xffffff, radius: 0.53, name: 'Hydrogen' },
+      'O': { color: 0xff6b6b, radius: 0.66, name: 'Oxygen' }
+    };
+
+    function initViewer() {
+      const viewerElement = document.getElementById('viewer');
+      viewer = $3Dmol.createViewer(viewerElement, {});
+      viewer.setBackgroundColor("white");
+    }
+
+    function addBond(start, end, style = 'line') {
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
+      const dz = end.z - start.z;
+      const midpoint = {
+        x: start.x + dx / 2,
+        y: start.y + dy / 2,
+        z: start.z + dz / 2
+      };
+      // Bonds represented by cylinder geometry (simplified visualization)
+    }
+
+    function visualizeGlucose() {
+      viewer.clear();
+
+      // Glucose structure (C6H12O6) - simplified ring representation
+      const glucose = [
+        // Carbon ring (pyranose ring)
+        { element: 'C', x: 0, y: 0, z: 0 },    // C1
+        { element: 'C', x: 1.5, y: 0, z: 0 },  // C2
+        { element: 'C', x: 2.25, y: 1.3, z: 0 }, // C3
+        { element: 'C', x: 1.5, y: 2.6, z: 0 }, // C4
+        { element: 'C', x: 0, y: 2.6, z: 0 },  // C5
+        { element: 'O', x: -0.75, y: 1.3, z: 0 }, // O5 (ring oxygen)
+
+        // Side groups and hydrogens (simplified)
+        { element: 'O', x: -0.8, y: -0.8, z: 0 }, // C1 hydroxyl
+        { element: 'O', x: 2.25, y: -0.8, z: 0 }, // C2 hydroxyl
+        { element: 'O', x: 3.5, y: 1.3, z: 0 },  // C3 hydroxyl
+        { element: 'O', x: 2.25, y: 3.4, z: 0 }, // C4 hydroxyl
+        { element: 'C', x: -0.75, y: 3.4, z: 0 }, // C6 (CH2OH group)
+        { element: 'O', x: -1.5, y: 4.2, z: 0 }   // C6 hydroxyl
+      ];
+
+      addAtomsToViewer(glucose);
+      viewer.zoomTo();
+      viewer.render();
+    }
+
+    function visualizeStarch() {
+      viewer.clear();
+
+      // Multiple glucose units linked together (starch chain)
+      let atoms = [];
+      const numUnits = 4;
+
+      for (let unit = 0; unit < numUnits; unit++) {
+        const offset = unit * 4;
+
+        // Simplified glucose unit
+        atoms.push({ element: 'C', x: offset, y: 0, z: 0 });
+        atoms.push({ element: 'C', x: offset + 1.5, y: 0, z: 0 });
+        atoms.push({ element: 'C', x: offset + 2.25, y: 1.3, z: 0 });
+        atoms.push({ element: 'C', x: offset + 1.5, y: 2.6, z: 0 });
+        atoms.push({ element: 'C', x: offset, y: 2.6, z: 0 });
+        atoms.push({ element: 'O', x: offset - 0.75, y: 1.3, z: 0 });
+
+        // Hydroxyl groups
+        atoms.push({ element: 'O', x: offset - 0.8, y: -0.8, z: 0 });
+        atoms.push({ element: 'O', x: offset + 2.25, y: -0.8, z: 0 });
+        atoms.push({ element: 'O', x: offset + 3.5, y: 1.3, z: 0 });
+        atoms.push({ element: 'O', x: offset + 2.25, y: 3.4, z: 0 });
+      }
+
+      addAtomsToViewer(atoms);
+      viewer.zoomTo();
+      viewer.render();
+    }
+
+    function visualizeCellulose() {
+      viewer.clear();
+
+      // Cellulose - similar to starch but with different bond configuration
+      let atoms = [];
+      const numUnits = 3;
+
+      for (let unit = 0; unit < numUnits; unit++) {
+        const offset = unit * 4.5;
+        const vertOffset = Math.sin(unit * Math.PI / 6) * 1.5;
+
+        atoms.push({ element: 'C', x: offset, y: vertOffset, z: 0 });
+        atoms.push({ element: 'C', x: offset + 1.5, y: vertOffset, z: 0.5 });
+        atoms.push({ element: 'C', x: offset + 2.25, y: vertOffset + 1.3, z: 1 });
+        atoms.push({ element: 'C', x: offset + 1.5, y: vertOffset + 2.6, z: 0.5 });
+        atoms.push({ element: 'C', x: offset, y: vertOffset + 2.6, z: 0 });
+        atoms.push({ element: 'O', x: offset - 0.75, y: vertOffset + 1.3, z: 0 });
+
+        atoms.push({ element: 'O', x: offset - 0.8, y: vertOffset - 0.8, z: 0 });
+        atoms.push({ element: 'O', x: offset + 2.25, y: vertOffset - 0.8, z: 0.5 });
+        atoms.push({ element: 'O', x: offset + 3.5, y: vertOffset + 1.3, z: 1 });
+      }
+
+      addAtomsToViewer(atoms);
+      viewer.zoomTo();
+      viewer.render();
+    }
+
+    function visualizeGlycogen() {
+      viewer.clear();
+
+      // Glycogen - branched structure
+      let atoms = [];
+
+      // Main chain
+      for (let i = 0; i < 3; i++) {
+        const x = i * 4;
+        atoms.push({ element: 'C', x: x, y: 0, z: 0 });
+        atoms.push({ element: 'C', x: x + 1.5, y: 0, z: 0 });
+        atoms.push({ element: 'O', x: x + 1.2, y: 1.5, z: 0 });
+      }
+
+      // Branch chains
+      for (let branch = 0; branch < 2; branch++) {
+        const branchPoint = branch * 8;
+        const branchY = (branch % 2 === 0) ? 2.5 : -2.5;
+
+        for (let i = 0; i < 2; i++) {
+          const x = branchPoint + i * 3;
+          atoms.push({ element: 'C', x: x, y: branchY, z: 0 });
+          atoms.push({ element: 'C', x: x + 1.5, y: branchY, z: 0 });
+          atoms.push({ element: 'O', x: x + 1.2, y: branchY + 1.5, z: 0 });
         }
+      }
 
-        function addBond(start, end, style = 'line') {
-            const dx = end.x - start.x;
-            const dy = end.y - start.y;
-            const dz = end.z - start.z;
-            const midpoint = {
-                x: start.x + dx / 2,
-                y: start.y + dy / 2,
-                z: start.z + dz / 2
-            };
-            // Bonds represented by cylinder geometry (simplified visualization)
-        }
+      addAtomsToViewer(atoms);
+      viewer.zoomTo();
+      viewer.render();
+    }
 
-        function visualizeGlucose() {
-            viewer.clear();
-            
-            // Glucose structure (C6H12O6) - simplified ring representation
-            const glucose = [
-                // Carbon ring (pyranose ring)
-                { element: 'C', x: 0, y: 0, z: 0 },    // C1
-                { element: 'C', x: 1.5, y: 0, z: 0 },  // C2
-                { element: 'C', x: 2.25, y: 1.3, z: 0 }, // C3
-                { element: 'C', x: 1.5, y: 2.6, z: 0 }, // C4
-                { element: 'C', x: 0, y: 2.6, z: 0 },  // C5
-                { element: 'O', x: -0.75, y: 1.3, z: 0 }, // O5 (ring oxygen)
-                
-                // Side groups and hydrogens (simplified)
-                { element: 'O', x: -0.8, y: -0.8, z: 0 }, // C1 hydroxyl
-                { element: 'O', x: 2.25, y: -0.8, z: 0 }, // C2 hydroxyl
-                { element: 'O', x: 3.5, y: 1.3, z: 0 },  // C3 hydroxyl
-                { element: 'O', x: 2.25, y: 3.4, z: 0 }, // C4 hydroxyl
-                { element: 'C', x: -0.75, y: 3.4, z: 0 }, // C6 (CH2OH group)
-                { element: 'O', x: -1.5, y: 4.2, z: 0 }   // C6 hydroxyl
-            ];
+    function addAtomsToViewer(atoms) {
+      // Calculate center of mass
+      let centerX = 0, centerY = 0, centerZ = 0;
+      atoms.forEach(atom => {
+        centerX += atom.x;
+        centerY += atom.y;
+        centerZ += atom.z;
+      });
+      centerX /= atoms.length;
+      centerY /= atoms.length;
+      centerZ /= atoms.length;
 
-            addAtomsToViewer(glucose);
-            viewer.zoomTo();
-            viewer.render();
-        }
+      // Add atoms centered at origin
+      atoms.forEach(atom => {
+        const eleData = elements[atom.element];
+        viewer.addSphere({
+          center: { x: atom.x - centerX, y: atom.y - centerY, z: atom.z - centerZ },
+          radius: eleData.radius,
+          color: eleData.color,
+          wireframe: false
+        });
+      });
+    }
 
-        function visualizeStarch() {
-            viewer.clear();
-            
-            // Multiple glucose units linked together (starch chain)
-            let atoms = [];
-            const numUnits = 4;
-            
-            for (let unit = 0; unit < numUnits; unit++) {
-                const offset = unit * 4;
-                
-                // Simplified glucose unit
-                atoms.push({ element: 'C', x: offset, y: 0, z: 0 });
-                atoms.push({ element: 'C', x: offset + 1.5, y: 0, z: 0 });
-                atoms.push({ element: 'C', x: offset + 2.25, y: 1.3, z: 0 });
-                atoms.push({ element: 'C', x: offset + 1.5, y: 2.6, z: 0 });
-                atoms.push({ element: 'C', x: offset, y: 2.6, z: 0 });
-                atoms.push({ element: 'O', x: offset - 0.75, y: 1.3, z: 0 });
-                
-                // Hydroxyl groups
-                atoms.push({ element: 'O', x: offset - 0.8, y: -0.8, z: 0 });
-                atoms.push({ element: 'O', x: offset + 2.25, y: -0.8, z: 0 });
-                atoms.push({ element: 'O', x: offset + 3.5, y: 1.3, z: 0 });
-                atoms.push({ element: 'O', x: offset + 2.25, y: 3.4, z: 0 });
-            }
-            
-            addAtomsToViewer(atoms);
-            viewer.zoomTo();
-            viewer.render();
-        }
+    function resetView() {
+      viewer.zoomTo();
+      viewer.render();
+    }
 
-        function visualizeCellulose() {
-            viewer.clear();
-            
-            // Cellulose - similar to starch but with different bond configuration
-            let atoms = [];
-            const numUnits = 3;
-            
-            for (let unit = 0; unit < numUnits; unit++) {
-                const offset = unit * 4.5;
-                const vertOffset = Math.sin(unit * Math.PI / 6) * 1.5;
-                
-                atoms.push({ element: 'C', x: offset, y: vertOffset, z: 0 });
-                atoms.push({ element: 'C', x: offset + 1.5, y: vertOffset, z: 0.5 });
-                atoms.push({ element: 'C', x: offset + 2.25, y: vertOffset + 1.3, z: 1 });
-                atoms.push({ element: 'C', x: offset + 1.5, y: vertOffset + 2.6, z: 0.5 });
-                atoms.push({ element: 'C', x: offset, y: vertOffset + 2.6, z: 0 });
-                atoms.push({ element: 'O', x: offset - 0.75, y: vertOffset + 1.3, z: 0 });
-                
-                atoms.push({ element: 'O', x: offset - 0.8, y: vertOffset - 0.8, z: 0 });
-                atoms.push({ element: 'O', x: offset + 2.25, y: vertOffset - 0.8, z: 0.5 });
-                atoms.push({ element: 'O', x: offset + 3.5, y: vertOffset + 1.3, z: 1 });
-            }
-            
-            addAtomsToViewer(atoms);
-            viewer.zoomTo();
-            viewer.render();
-        }
-
-        function visualizeGlycogen() {
-            viewer.clear();
-            
-            // Glycogen - branched structure
-            let atoms = [];
-            
-            // Main chain
-            for (let i = 0; i < 3; i++) {
-                const x = i * 4;
-                atoms.push({ element: 'C', x: x, y: 0, z: 0 });
-                atoms.push({ element: 'C', x: x + 1.5, y: 0, z: 0 });
-                atoms.push({ element: 'O', x: x + 1.2, y: 1.5, z: 0 });
-            }
-            
-            // Branch chains
-            for (let branch = 0; branch < 2; branch++) {
-                const branchPoint = branch * 8;
-                const branchY = (branch % 2 === 0) ? 2.5 : -2.5;
-                
-                for (let i = 0; i < 2; i++) {
-                    const x = branchPoint + i * 3;
-                    atoms.push({ element: 'C', x: x, y: branchY, z: 0 });
-                    atoms.push({ element: 'C', x: x + 1.5, y: branchY, z: 0 });
-                    atoms.push({ element: 'O', x: x + 1.2, y: branchY + 1.5, z: 0 });
-                }
-            }
-            
-            addAtomsToViewer(atoms);
-            viewer.zoomTo();
-            viewer.render();
-        }
-
-        function addAtomsToViewer(atoms) {
-            // Calculate center of mass
-            let centerX = 0, centerY = 0, centerZ = 0;
-            atoms.forEach(atom => {
-                centerX += atom.x;
-                centerY += atom.y;
-                centerZ += atom.z;
-            });
-            centerX /= atoms.length;
-            centerY /= atoms.length;
-            centerZ /= atoms.length;
-            
-            // Add atoms centered at origin
-            atoms.forEach(atom => {
-                const eleData = elements[atom.element];
-                viewer.addSphere({
-                    center: { x: atom.x - centerX, y: atom.y - centerY, z: atom.z - centerZ },
-                    radius: eleData.radius,
-                    color: eleData.color,
-                    wireframe: false
-                });
-            });
-        }
-
-        function resetView() {
-            viewer.zoomTo();
-            viewer.render();
-        }
-
-        // Initialize viewer and load default structure
-        initViewer();
-        visualizeGlucose();
-    </script>
+    // Initialize viewer and load default structure
+    initViewer();
+    visualizeGlucose();
+  </script>
 </body>
+
 </html>
